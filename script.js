@@ -57,11 +57,18 @@ let Gameflow = (function createGameflow() {
 
     let playRound = (positionX, positionY) => {
         let currentPlayer = Players[currentPlayerIndex];
-        while(!Gameboard.placeMark(currentPlayer.mark, positionX, positionY)){};
+        if (!Gameboard.placeMark(currentPlayer.mark, positionX, positionY)) {
+            currentPlayerIndex--;
+        }
         let roundResult = checkIfWonAndWhichMark();
-        if (roundResult != 'none') {
+        if (roundResult != 'none' && roundResult != 'stalemate') {
             let winningPlayer = findPlayerByMark(roundResult);
             console.log(`${winningPlayer.name} won!`);
+            currentPlayerIndex = 0;
+            Gameboard.reset();
+        }
+        else if(roundResult == 'stalemate') {
+            console.log('stalemate!');
             currentPlayerIndex = 0;
             Gameboard.reset();
         }
@@ -73,10 +80,13 @@ let Gameflow = (function createGameflow() {
 
     let findPlayerByMark = (mark) => {
         for (const player of Players) {
+            console.log(player);
             if (player.mark == mark) {
                 return player;
             }
         }
+        console.log('player not found');
+        return 'none';
     }
 
     let checkIfWonAndWhichMark = () => {
@@ -84,9 +94,9 @@ let Gameflow = (function createGameflow() {
         let checkRows = () => {
             for (let i = 0; i < size; i++) {
                 let count = 0;
-                let markToCheckAgainst = Gameboard.getMarkAtPosition(i,0);
+                let markToCheckAgainst = Gameboard.getMarkAtPosition(i, 0);
                 for (let j = 0; j < size; j++) {
-                    if (markToCheckAgainst != Gameboard.getMarkAtPosition(i,j)) {
+                    if (markToCheckAgainst != Gameboard.getMarkAtPosition(i, j)) {
                         break;
                     }
                     count++;
@@ -101,9 +111,9 @@ let Gameflow = (function createGameflow() {
         let checkColumns = () => {
             for (let i = 0; i < size; i++) {
                 let count = 0;
-                let markToCheckAgainst = Gameboard.getMarkAtPosition(0,i);
+                let markToCheckAgainst = Gameboard.getMarkAtPosition(0, i);
                 for (let j = 0; j < size; j++) {
-                    if (markToCheckAgainst != Gameboard.getMarkAtPosition(j,i)) {
+                    if (markToCheckAgainst != Gameboard.getMarkAtPosition(j, i)) {
                         break;
                     }
                     count++;
@@ -116,11 +126,11 @@ let Gameflow = (function createGameflow() {
         }
 
         let checkDiagonals = () => {
-            let markToCheckAgainst = Gameboard.getMarkAtPosition(0,0);
+            let markToCheckAgainst = Gameboard.getMarkAtPosition(0, 0);
             let j = 0;
             let count = 0;
             for (let i = 0; i < size; i++) {
-                if (markToCheckAgainst != Gameboard.getMarkAtPosition(i,j)) {
+                if (markToCheckAgainst != Gameboard.getMarkAtPosition(i, j)) {
                     break;
                 }
                 count++;
@@ -129,18 +139,31 @@ let Gameflow = (function createGameflow() {
             if (count == size) {
                 return markToCheckAgainst;
             }
-            markToCheckAgainst = Gameboard.getMarkAtPosition(0,j);
+            j = size - 1;
+            markToCheckAgainst = Gameboard.getMarkAtPosition(0, j);
             for (let i = 0; i < size; i++) {
-                if (markToCheckAgainst != Gameboard.getMarkAtPosition(i,j)) {
+                if (markToCheckAgainst != Gameboard.getMarkAtPosition(i, j)) {
                     return 'none';
                 }
                 j--;
             }
+            return markToCheckAgainst;
+        }
+
+        let checkIfStalemate = () => {
+            for (let i = 0; i < size; i++) {
+                for (let j = 0; j < size; j++) {
+                    if (Gameboard.getMarkAtPosition(i, j) === ' ') {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         let [resultRows, resultColumns, resultDiagonals] = [checkRows(), checkColumns(), checkDiagonals()];
 
-        console.log(resultRows,resultColumns,resultDiagonals);
+        // console.log(resultRows,resultColumns,resultDiagonals);
 
         if (resultRows != 'none' && resultRows != ' ') {
             return resultRows;
@@ -151,6 +174,11 @@ let Gameflow = (function createGameflow() {
         if (resultDiagonals != 'none' && resultDiagonals != ' ') {
             return resultDiagonals;
         }
+
+        if(checkIfStalemate()){
+            return 'stalemate';
+        }
+
         return 'none';
     }
 
