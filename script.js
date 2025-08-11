@@ -185,5 +185,32 @@ let Gameflow = (function createGameflow() {
     return { createPlayer, addPlayer, playRound };
 })();
 
+let GameController = (function createGameController(){
+    let addPlayer = (e) => {
+        e.preventDefault();
+        let name = document.querySelector('#name');
+        let mark = document.querySelector('#mark');
+        
+        let playerContainer = document.createElement('div');
 
+        let nameP = document.createElement('p');
+        nameP.textContent = 'Name: ' + name.value;
+        let markP = document.createElement('p');
+        markP.textContent = 'Mark: ' + mark.value;
+        playerContainer.appendChild(nameP);
+        playerContainer.appendChild(markP);
+
+        let playerList = document.querySelector('.player-list');
+        playerList.appendChild(playerContainer);
+
+        name.value = '';
+        mark.value = '';
+
+        Gameflow.addPlayer(Gameflow.createPlayer(name,mark));
+    };
+
+    let playerForm = document.querySelector('.player-form');
+    playerForm.addEventListener('submit', addPlayer);
+
+})();
 
