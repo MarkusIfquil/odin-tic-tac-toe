@@ -212,5 +212,17 @@ let GameController = (function createGameController(){
     let playerForm = document.querySelector('.player-form');
     playerForm.addEventListener('submit', addPlayer);
 
+    let fillGameGrid = (size) => {
+        let grid = document.querySelector('.game-grid');
+        for (let i = 0; i < size*size; i++) {
+            let square = document.createElement('div');
+            grid.appendChild(square);
+        }
+        grid.style['grid-template-columns'] = `repeat(${size},1fr)`;
+        grid.style['grid-template-rows'] = `repeat(${size},1fr)`;
+    }
+
+    fillGameGrid(3);
+
 })();
 
