@@ -22,6 +22,8 @@ body {
     flex: 1 1 0;
     display: flex;
     flex-direction: column;
+    border: 1px solid blue;
+    justify-content: center;
 }
 
 .main > * {
@@ -37,8 +39,21 @@ body {
     justify-content: center;
 }
 
+.game-controls {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    justify-content: center;
+}
+
 .game-grid {
-    flex: 1 1 0;
+    width: 50%;
+    height: 50%;
+    align-self: center;
+    justify-self: center;
     display: grid;
     gap: 1em;
 }

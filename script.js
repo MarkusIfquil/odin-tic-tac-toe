@@ -219,16 +219,19 @@ let GameController = (function createGameController(){
         grid.style['grid-template-rows'] = `repeat(${size},1fr)`;
     }
     
-    let startRound = (e) => {
+    let toggleHidden = (e) => {
         playersDiv.classList.toggle("hidden");
         gameGrid.classList.toggle("hidden");
     }
     
     let playersDiv = document.querySelector('.players');
     let playerForm = document.querySelector('.player-form');
-    let gameGrid = document.querySelector('.game-grid');
+    let gameGrid = document.querySelector('.game-controls');
     let startButton = document.querySelector('#start-round');
-    startButton.addEventListener('click', startRound);
+    let goBackButton = document.querySelector('#go-back');
+    startButton.addEventListener('click', toggleHidden);
+    goBackButton.addEventListener('click', toggleHidden);
+
     playerForm.addEventListener('submit', addPlayer);
     fillGameGrid(3);
 })();
