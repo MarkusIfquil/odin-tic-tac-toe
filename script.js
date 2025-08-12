@@ -7,7 +7,6 @@ let Gameboard = (function createGameboard() {
     }
 
     let reset = (boardSizeA = 3) => {
-        console.log(`bsa ${boardSizeA}`);
         boardSize = boardSizeA;
         gameGrid = [];
 
@@ -50,6 +49,7 @@ let Gameboard = (function createGameboard() {
 })();
 
 let Gameflow = (function createGameflow() {
+    let gameState = 'running';
     let Players = [];
     let currentPlayerIndex = 0;
 
@@ -72,6 +72,7 @@ let Gameflow = (function createGameflow() {
     }
 
     let getCurrentPlayer = () => {
+        console.log(`current player: ${Players[currentPlayerIndex].name}`);
         return Players[currentPlayerIndex];
     }
 
@@ -104,6 +105,10 @@ let Gameflow = (function createGameflow() {
         GameController.fillGameGrid(boardSize);
     }
 
+    let switchPlayer = () => {
+        currentPlayerIndex = (currentPlayerIndex + 1) % Players.length;    
+    }
+
     let placeMarkerAndCheckIfBadMove = (mark, positionX, positionY) => {
         return Gameboard.placeMark(mark, positionX, positionY);
     }
@@ -113,16 +118,22 @@ let Gameflow = (function createGameflow() {
         if (roundResult != 'none' && roundResult != 'stalemate') {
             let winningPlayer = findPlayerByMark(roundResult);
             gameStateP.textContent = `${winningPlayer.name} won!`;
+            gameState = 'win';
             reset();
         }
         else if (roundResult == 'stalemate') {
             gameStateP.textContent = `stalemate!`;
+            gameState = 'stalemate';
             reset();
         }
         else {
             gameStateP.textContent = `game is running`;
-            currentPlayerIndex = (currentPlayerIndex + 1) % Players.length;
+            gameState = 'running';
         }
+    }
+
+    let getGameState = () => {
+        return gameState;
     }
 
     let playRound = (positionX, positionY) => {
@@ -246,7 +257,7 @@ let Gameflow = (function createGameflow() {
         return 'none';
     }
 
-    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound, reset, checkIfPlayerExists };
+    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound, reset, checkIfPlayerExists, getGameState, switchPlayer };
 })();
 
 let GameController = (function createGameController() {
@@ -258,13 +269,9 @@ let GameController = (function createGameController() {
         Gameflow.removePlayer({ name: removablePlayer.children[0].textContent, mark: removablePlayer.children[1].textContent });
     }
 
-    let addPlayer = (e) => {
-        e.preventDefault();
-
-        let name = document.querySelector('#name');
-        let mark = document.querySelector('#mark');
-
-        if (Gameflow.checkIfPlayerExists(name.value, mark.value)) {
+    let addPlayer = (name, mark) => {
+        console.log(name, mark);
+        if (Gameflow.checkIfPlayerExists(name, mark)) {
             alert('a player with that name or mark already exists');
             return;
         }
@@ -274,9 +281,9 @@ let GameController = (function createGameController() {
         playerContainer.classList.add(`player-${playerCount}`);
 
         let nameP = document.createElement('p');
-        nameP.textContent = name.value;
+        nameP.textContent = name;
         let markP = document.createElement('p');
-        markP.textContent = mark.value;
+        markP.textContent = mark;
 
         let removePlayerButton = document.createElement('button');
         removePlayerButton.textContent = 'remove player';
@@ -289,7 +296,16 @@ let GameController = (function createGameController() {
         let playerList = document.querySelector('.player-list');
         playerList.appendChild(playerContainer);
 
-        Gameflow.addPlayer(Gameflow.createPlayer(name.value, mark.value));
+        Gameflow.addPlayer(Gameflow.createPlayer(name, mark));
+    }
+
+    let onAddPlayerClick = (e) => {
+        e.preventDefault();
+
+        let name = document.querySelector('#name');
+        let mark = document.querySelector('#mark');
+
+        addPlayer(name.value, mark.value);
 
         name.value = '';
         mark.value = '';
@@ -307,7 +323,11 @@ let GameController = (function createGameController() {
         let column = squareNumber % Gameboard.getBoardSize();
 
         if(Gameflow.playRound(row, column)) {
-            e.target.textContent = Gameflow.getCurrentPlayer().mark;
+            if(Gameflow.getGameState() == 'running') {
+                e.target.textContent = Gameflow.getCurrentPlayer().mark;
+                Gameflow.switchPlayer();
+            }
+            // console.log(Gameflow.getCurrentPlayer().mark, Gameflow.getCurrentPlayer().name);
             changeCurrentPlayerText();
         };
     };
@@ -357,9 +377,12 @@ let GameController = (function createGameController() {
     goBackButton.addEventListener('click', toggleHidden);
     resetButton.addEventListener('click', () => Gameflow.reset());
 
-    playerForm.addEventListener('submit', addPlayer);
+    playerForm.addEventListener('submit', onAddPlayerClick);
 
     fillGameGrid(3);
+
+    addPlayer('jan Mawaku','x');
+    addPlayer('jan Sopija','o');
 
     return { clearGameGrid, fillGameGrid };
 })();
