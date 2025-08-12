@@ -56,6 +56,14 @@ let Gameflow = (function createGameflow() {
         Players.push(player);
     };
 
+    let removePlayer = (player) => {
+        Players.splice(Players.find((p) => {p == player}),1);
+    }
+
+    let getPlayerListSize = () => {
+        return Players.length;
+    }
+
     let playRound = (positionX, positionY) => {
         let currentPlayer = Players[currentPlayerIndex];
         if (!Gameboard.placeMark(currentPlayer.mark, positionX, positionY)) {
@@ -183,23 +191,39 @@ let Gameflow = (function createGameflow() {
         return 'none';
     }
 
-    return { createPlayer, addPlayer, playRound };
+    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, playRound };
 })();
 
 let GameController = (function createGameController(){
+    let removePlayer = (index) => {
+        let removablePlayer = document.querySelector(`.player-list > .player-${index}`);
+        let playerList = document.querySelector('.player-list');
+        console.log(index);
+        console.log(removablePlayer);
+
+        playerList.removeChild(removablePlayer);
+        Gameflow.removePlayer();
+    }
+
     let addPlayer = (e) => {
         e.preventDefault();
         let name = document.querySelector('#name');
         let mark = document.querySelector('#mark');
         
-        let playerContainer = document.createElement('div');
+        let playerCount = Gameflow.getPlayerListSize();
 
+        let playerContainer = document.createElement('div');
+        playerContainer.classList.add(`player-${playerCount}`);
         let nameP = document.createElement('p');
         nameP.textContent = 'Name: ' + name.value;
         let markP = document.createElement('p');
         markP.textContent = 'Mark: ' + mark.value;
+        let removePlayerButton = document.createElement('button');
+        removePlayerButton.textContent = 'remove player';
+        removePlayerButton.addEventListener('click', () => removePlayer(playerCount));
         playerContainer.appendChild(nameP);
         playerContainer.appendChild(markP);
+        playerContainer.appendChild(removePlayerButton);
 
         let playerList = document.querySelector('.player-list');
         playerList.appendChild(playerContainer);
