@@ -1,12 +1,19 @@
-let Gameboard = (function createGameboard(boardSize) {
+let Gameboard = (function createGameboard() {
     let gameGrid = [];
+    let boardSize;
 
-    let reset = () => {
+    let getBoardSize = () => {
+        return boardSize;
+    }
+
+    let reset = (boardSizeA = 3) => {
+        console.log(`bsa ${boardSizeA}`);
+        boardSize = boardSizeA;
         gameGrid = [];
 
-        for (let index = 0; index < boardSize; index++) {
+        for (let index = 0; index < boardSizeA; index++) {
             let row = [];
-            for (let index = 0; index < boardSize; index++) {
+            for (let index = 0; index < boardSizeA; index++) {
                 row.push(' ');
             }
             gameGrid.push(row);
@@ -39,8 +46,8 @@ let Gameboard = (function createGameboard(boardSize) {
         }
     }
 
-    return { reset, placeMark, printBoard, getMarkAtPosition, boardSize };
-})(3);
+    return { reset, placeMark, printBoard, getMarkAtPosition, getBoardSize};
+})();
 
 let Gameflow = (function createGameflow() {
     let Players = [];
@@ -89,13 +96,16 @@ let Gameflow = (function createGameflow() {
     let reset = () => {
         currentPlayerIndex = 0;
         GameController.clearGameGrid();
-        Gameboard.reset();
+
+        let boardSizeInput = document.querySelector('#size');
+        let boardSize = boardSizeInput.value;
+        Gameboard.reset(boardSize);
+        console.log(Gameboard.getBoardSize());
+        GameController.fillGameGrid(boardSize);
     }
 
     let placeMarkerAndCheckIfBadMove = (mark, positionX, positionY) => {
-        if (!Gameboard.placeMark(mark, positionX, positionY)) {
-            currentPlayerIndex--;
-        }
+        return Gameboard.placeMark(mark, positionX, positionY);
     }
 
     let displayOnFinalGameState = (roundResult) => {
@@ -118,13 +128,16 @@ let Gameflow = (function createGameflow() {
     let playRound = (positionX, positionY) => {
         let currentPlayer = getCurrentPlayer();
 
-        placeMarkerAndCheckIfBadMove(currentPlayer.mark, positionX, positionY);
+        if(!placeMarkerAndCheckIfBadMove(currentPlayer.mark, positionX, positionY)) {
+            return false;
+        }
 
         let roundResult = checkIfWonAndWhichMark();
 
         displayOnFinalGameState(roundResult);
 
         Gameboard.printBoard();
+        return true;
     };
 
     let findPlayerByMark = (mark) => {
@@ -137,7 +150,7 @@ let Gameflow = (function createGameflow() {
     }
 
     let checkIfWonAndWhichMark = () => {
-        let size = Gameboard.boardSize;
+        let size = Gameboard.getBoardSize();
         let checkRows = () => {
             for (let i = 0; i < size; i++) {
                 let count = 0;
@@ -290,17 +303,18 @@ let GameController = (function createGameController() {
 
     let clickGrid = (e) => {
         let squareNumber = e.target.className;
-        let row = Math.floor(squareNumber / Gameboard.boardSize);
-        let column = squareNumber % Gameboard.boardSize;
+        let row = Math.floor(squareNumber / Gameboard.getBoardSize());
+        let column = squareNumber % Gameboard.getBoardSize();
 
-        e.target.textContent = Gameflow.getCurrentPlayer().mark;
-
-        Gameflow.playRound(row, column);
-        changeCurrentPlayerText();
+        if(Gameflow.playRound(row, column)) {
+            e.target.textContent = Gameflow.getCurrentPlayer().mark;
+            changeCurrentPlayerText();
+        };
     };
 
-    let fillGameGrid = (size) => {
+    let fillGameGrid = (size = 3) => {
         let grid = document.querySelector('.game-grid');
+        grid.innerHTML = '';
         for (let i = 0; i < size * size; i++) {
             let square = document.createElement('div');
             square.classList.add(i);
@@ -330,6 +344,7 @@ let GameController = (function createGameController() {
         setupDiv.classList.toggle("hidden");
         gameGrid.classList.toggle("hidden");
         changeCurrentPlayerText();
+        Gameflow.reset();
     };
 
     let setupDiv = document.querySelector('.setup');
@@ -346,6 +361,6 @@ let GameController = (function createGameController() {
 
     fillGameGrid(3);
 
-    return { clearGameGrid };
+    return { clearGameGrid, fillGameGrid };
 })();
 

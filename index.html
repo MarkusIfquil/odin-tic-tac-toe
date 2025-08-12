@@ -18,16 +18,20 @@
                     <legend>add players</legend>
                     <div>
                         <label for="name">name</label>
-                        <input type="text" name="name" id="name" maxlength="20">
+                        <input type="text" name="name" id="name" maxlength="20" required>
                     </div>
                     <div>
                         <label for="mark">mark</label>
-                        <input type="text" name="mark" id="mark" maxlength="1">
+                        <input type="text" name="mark" id="mark" maxlength="1" required>
                     </div>
                     <button type="submit">add player</button>
                 </form>
                 <p>players</p>
                 <div class="player-list"></div>
+            </div>
+            <div class="settings">
+                <label for="size">board size</label>
+                <input type="number" name="size" id="size" placeholder="3" min="3" max="10">
             </div>
             <div class="game-actions">
                 <button type="button" id="start-round">start round</button>

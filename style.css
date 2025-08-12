@@ -72,6 +72,19 @@ header {
     justify-content: space-between;
 }
 
+.settings {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    align-self: center;
+    gap: 1em;
+}
+
+#size {
+    width: 30%;
+}
+
 form {
     padding: 1em;
     display: flex;
