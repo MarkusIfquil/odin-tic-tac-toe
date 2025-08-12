@@ -1,11 +1,17 @@
 @import url('https://cdn.jsdelivr.net/npm/@catppuccin/palette/css/catppuccin.css');
 
+@font-face {
+    font-family: jetbrainsmono;
+    src: url('fonts/JetBrainsMonoNerdFontPropo-Regular.ttf');
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     color: var(--ctp-mocha-text);
     line-height: 1.2;
+    font-family: jetbrainsmono, monospace;
 }
 
 button {
