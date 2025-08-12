@@ -57,15 +57,19 @@ let Gameflow = (function createGameflow() {
     };
 
     let removePlayer = (player) => {
-        Players.splice(Players.find((p) => {p == player}),1);
+        Players.splice(Players.find((p) => { p == player }), 1);
     }
 
     let getPlayerListSize = () => {
         return Players.length;
     }
 
+    let getCurrentPlayer = () => {
+        return Players[currentPlayerIndex];
+    }
+
     let playRound = (positionX, positionY) => {
-        let currentPlayer = Players[currentPlayerIndex];
+        let currentPlayer = getCurrentPlayer();
         if (!Gameboard.placeMark(currentPlayer.mark, positionX, positionY)) {
             currentPlayerIndex--;
         }
@@ -76,7 +80,7 @@ let Gameflow = (function createGameflow() {
             currentPlayerIndex = 0;
             Gameboard.reset();
         }
-        else if(roundResult == 'stalemate') {
+        else if (roundResult == 'stalemate') {
             console.log('stalemate!');
             currentPlayerIndex = 0;
             Gameboard.reset();
@@ -184,17 +188,17 @@ let Gameflow = (function createGameflow() {
             return resultDiagonals;
         }
 
-        if(checkIfStalemate()){
+        if (checkIfStalemate()) {
             return 'stalemate';
         }
 
         return 'none';
     }
 
-    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, playRound };
+    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound };
 })();
 
-let GameController = (function createGameController(){
+let GameController = (function createGameController() {
     let removePlayer = (index) => {
         let removablePlayer = document.querySelector(`.player-list > .player-${index}`);
         let playerList = document.querySelector('.player-list');
@@ -209,7 +213,7 @@ let GameController = (function createGameController(){
         e.preventDefault();
         let name = document.querySelector('#name');
         let mark = document.querySelector('#mark');
-        
+
         let playerCount = Gameflow.getPlayerListSize();
 
         let playerContainer = document.createElement('div');
@@ -228,22 +232,29 @@ let GameController = (function createGameController(){
         let playerList = document.querySelector('.player-list');
         playerList.appendChild(playerContainer);
 
-        Gameflow.addPlayer(Gameflow.createPlayer(name.value,mark.value));
+        Gameflow.addPlayer(Gameflow.createPlayer(name.value, mark.value));
         name.value = '';
         mark.value = '';
     };
-    
+
+    let changeCurrentPlayerText = () => {
+        let currentPlayer = Gameflow.getCurrentPlayer();
+        let currentPlayerP = document.querySelector('.current-player');
+        currentPlayerP.textContent = `current player: ${currentPlayer.name}`;
+    }
+
     let clickGrid = (e) => {
         let squareNumber = e.target.className;
         let row = Math.floor(squareNumber / Gameboard.boardSize);
         let column = squareNumber % Gameboard.boardSize;
-        // console.log(`index: ${e.target.className} row: ${row} column: ${column}`);
-        Gameflow.playRound(row,column);
+
+        changeCurrentPlayerText();
+        Gameflow.playRound(row, column);
     };
 
     let fillGameGrid = (size) => {
         let grid = document.querySelector('.game-grid');
-        for (let i = 0; i < size*size; i++) {
+        for (let i = 0; i < size * size; i++) {
             let square = document.createElement('div');
             square.classList.add(i);
             square.addEventListener('click', clickGrid);
@@ -252,13 +263,14 @@ let GameController = (function createGameController(){
         grid.style['grid-template-columns'] = `repeat(${size},1fr)`;
         grid.style['grid-template-rows'] = `repeat(${size},1fr)`;
     };
-    
+
     let toggleHidden = (e) => {
         playersDiv.classList.toggle("hidden");
         gameGrid.classList.toggle("hidden");
+        changeCurrentPlayerText();
     };
 
-    
+
     let playersDiv = document.querySelector('.players');
     let playerForm = document.querySelector('.player-form');
     let gameGrid = document.querySelector('.game-controls');
@@ -268,6 +280,7 @@ let GameController = (function createGameController(){
     goBackButton.addEventListener('click', toggleHidden);
 
     playerForm.addEventListener('submit', addPlayer);
+
     fillGameGrid(3);
 })();
 
