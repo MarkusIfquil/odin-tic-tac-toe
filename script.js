@@ -52,6 +52,7 @@ let Gameflow = (function createGameflow() {
     };
 
     let addPlayer = (player) => {
+        console.log(player);
         Players.push(player);
     };
 
@@ -203,26 +204,36 @@ let GameController = (function createGameController(){
         let playerList = document.querySelector('.player-list');
         playerList.appendChild(playerContainer);
 
+        Gameflow.addPlayer(Gameflow.createPlayer(name.value,mark.value));
         name.value = '';
         mark.value = '';
-
-        Gameflow.addPlayer(Gameflow.createPlayer(name,mark));
     };
     
+    let clickGrid = (e) => {
+        let squareNumber = e.target.className;
+        let row = Math.floor(squareNumber / Gameboard.boardSize);
+        let column = squareNumber % Gameboard.boardSize;
+        // console.log(`index: ${e.target.className} row: ${row} column: ${column}`);
+        Gameflow.playRound(row,column);
+    };
+
     let fillGameGrid = (size) => {
         let grid = document.querySelector('.game-grid');
         for (let i = 0; i < size*size; i++) {
             let square = document.createElement('div');
+            square.classList.add(i);
+            square.addEventListener('click', clickGrid);
             grid.appendChild(square);
         }
         grid.style['grid-template-columns'] = `repeat(${size},1fr)`;
         grid.style['grid-template-rows'] = `repeat(${size},1fr)`;
-    }
+    };
     
     let toggleHidden = (e) => {
         playersDiv.classList.toggle("hidden");
         gameGrid.classList.toggle("hidden");
-    }
+    };
+
     
     let playersDiv = document.querySelector('.players');
     let playerForm = document.querySelector('.player-form');
