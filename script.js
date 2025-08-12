@@ -279,7 +279,15 @@ let GameController = (function createGameController() {
         }
     }
 
+    let noPlayers = () => {
+        return Gameflow.getPlayerListSize() == 0;
+    }
+
     let toggleHidden = (e) => {
+        if (noPlayers()) {
+            alert("there are no players!");
+            return;
+        }
         setupDiv.classList.toggle("hidden");
         gameGrid.classList.toggle("hidden");
         changeCurrentPlayerText();
@@ -297,6 +305,6 @@ let GameController = (function createGameController() {
 
     fillGameGrid(3);
 
-    return {clearGameGrid};
+    return { clearGameGrid };
 })();
 
