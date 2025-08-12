@@ -78,6 +78,7 @@ let Gameflow = (function createGameflow() {
             let winningPlayer = findPlayerByMark(roundResult);
             console.log(`${winningPlayer.name} won!`);
             currentPlayerIndex = 0;
+            GameController.clearGameGrid();
             Gameboard.reset();
         }
         else if (roundResult == 'stalemate') {
@@ -248,6 +249,8 @@ let GameController = (function createGameController() {
         let row = Math.floor(squareNumber / Gameboard.boardSize);
         let column = squareNumber % Gameboard.boardSize;
 
+        e.target.textContent = Gameflow.getCurrentPlayer().mark;
+
         changeCurrentPlayerText();
         Gameflow.playRound(row, column);
     };
@@ -264,12 +267,18 @@ let GameController = (function createGameController() {
         grid.style['grid-template-rows'] = `repeat(${size},1fr)`;
     };
 
+    let clearGameGrid = () => {
+        let grid = document.querySelector('.game-grid');
+        for (const square of grid.childNodes) {
+            square.textContent = '';
+        }
+    }
+
     let toggleHidden = (e) => {
         playersDiv.classList.toggle("hidden");
         gameGrid.classList.toggle("hidden");
         changeCurrentPlayerText();
     };
-
 
     let playersDiv = document.querySelector('.players');
     let playerForm = document.querySelector('.player-form');
@@ -282,5 +291,7 @@ let GameController = (function createGameController() {
     playerForm.addEventListener('submit', addPlayer);
 
     fillGameGrid(3);
+
+    return {clearGameGrid};
 })();
 
