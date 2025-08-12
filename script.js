@@ -68,32 +68,44 @@ let Gameflow = (function createGameflow() {
         return Players[currentPlayerIndex];
     }
 
-    let playRound = (positionX, positionY) => {
-        let currentPlayer = getCurrentPlayer();
-        if (!Gameboard.placeMark(currentPlayer.mark, positionX, positionY)) {
+    let reset = () => {
+        currentPlayerIndex = 0;
+        GameController.clearGameGrid();
+        Gameboard.reset();
+    }
+
+    let placeMarkerAndCheckIfBadMove = (mark, positionX, positionY) => {
+        if (!Gameboard.placeMark(mark, positionX, positionY)) {
             currentPlayerIndex--;
         }
-        let roundResult = checkIfWonAndWhichMark();
+    }
+
+    let displayOnFinalGameState = (roundResult) => {
+        let gameStateP = document.querySelector('.game-state');
         if (roundResult != 'none' && roundResult != 'stalemate') {
             let winningPlayer = findPlayerByMark(roundResult);
-
-            let gameStateP = document.querySelector('.game-state');
             gameStateP.textContent = `${winningPlayer.name} won!`;
-            currentPlayerIndex = 0;
-            GameController.clearGameGrid();
-            Gameboard.reset();
+            reset();
         }
         else if (roundResult == 'stalemate') {
-            let gameStateP = document.querySelector('.game-state');
             gameStateP.textContent = `stalemate!`;
-            currentPlayerIndex = 0;
-            Gameboard.reset();
+            reset();
         }
         else {
-            let gameStateP = document.querySelector('.game-state');
             gameStateP.textContent = `game is running`;
             currentPlayerIndex = (currentPlayerIndex + 1) % Players.length;
         }
+    }
+
+    let playRound = (positionX, positionY) => {
+        let currentPlayer = getCurrentPlayer();
+
+        placeMarkerAndCheckIfBadMove(currentPlayer.mark, positionX, positionY);
+
+        let roundResult = checkIfWonAndWhichMark();
+
+        displayOnFinalGameState(roundResult);
+
         Gameboard.printBoard();
     };
 
@@ -114,7 +126,7 @@ let Gameflow = (function createGameflow() {
             for (let i = 0; i < size; i++) {
                 let count = 0;
                 let markToCheckAgainst = Gameboard.getMarkAtPosition(i, 0);
-                if(markToCheckAgainst == ' ') {
+                if (markToCheckAgainst == ' ') {
                     continue;
                 }
                 for (let j = 0; j < size; j++) {
@@ -128,13 +140,13 @@ let Gameflow = (function createGameflow() {
                 }
             }
             return 'none';
-        }
+        };
 
         let checkColumns = () => {
             for (let i = 0; i < size; i++) {
                 let count = 0;
                 let markToCheckAgainst = Gameboard.getMarkAtPosition(0, i);
-                if(markToCheckAgainst == ' ') {
+                if (markToCheckAgainst == ' ') {
                     continue;
                 }
                 for (let j = 0; j < size; j++) {
@@ -148,7 +160,7 @@ let Gameflow = (function createGameflow() {
                 }
             }
             return 'none';
-        }
+        };
 
         let checkDiagonals = () => {
             let markToCheckAgainst = Gameboard.getMarkAtPosition(0, 0);
@@ -173,7 +185,7 @@ let Gameflow = (function createGameflow() {
                 j--;
             }
             return markToCheckAgainst == ' ' ? 'none' : markToCheckAgainst;
-        }
+        };
 
         let checkIfStalemate = () => {
             for (let i = 0; i < size; i++) {
@@ -184,11 +196,11 @@ let Gameflow = (function createGameflow() {
                 }
             }
             return true;
-        }
+        };
 
         let [resultRows, resultColumns, resultDiagonals] = [checkRows(), checkColumns(), checkDiagonals()];
 
-        console.log(resultRows,resultColumns,resultDiagonals);
+        // console.log(resultRows, resultColumns, resultDiagonals);
 
         if (resultRows != 'none') {
             return resultRows;
@@ -230,13 +242,16 @@ let GameController = (function createGameController() {
 
         let playerContainer = document.createElement('div');
         playerContainer.classList.add(`player-${playerCount}`);
+
         let nameP = document.createElement('p');
         nameP.textContent = 'name: ' + name.value;
         let markP = document.createElement('p');
         markP.textContent = 'mark: ' + mark.value;
+
         let removePlayerButton = document.createElement('button');
         removePlayerButton.textContent = 'remove player';
         removePlayerButton.addEventListener('click', () => removePlayer(playerCount));
+        
         playerContainer.appendChild(nameP);
         playerContainer.appendChild(markP);
         playerContainer.appendChild(removePlayerButton);
@@ -245,6 +260,7 @@ let GameController = (function createGameController() {
         playerList.appendChild(playerContainer);
 
         Gameflow.addPlayer(Gameflow.createPlayer(name.value, mark.value));
+        
         name.value = '';
         mark.value = '';
     };
