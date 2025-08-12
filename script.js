@@ -68,6 +68,24 @@ let Gameflow = (function createGameflow() {
         return Players[currentPlayerIndex];
     }
 
+    let checkIfPlayerExists = (name, mark) => {
+        if(name) {
+            for (const player of Players) {
+                if(player.name == name) {
+                    return true;
+                }
+            }
+        }
+        if(mark) {
+            for (const player of Players) {
+                if(player.mark == mark) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     let reset = () => {
         currentPlayerIndex = 0;
         GameController.clearGameGrid();
@@ -219,7 +237,7 @@ let Gameflow = (function createGameflow() {
         return 'none';
     }
 
-    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound, reset };
+    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound, reset, checkIfPlayerExists};
 })();
 
 let GameController = (function createGameController() {
@@ -235,9 +253,14 @@ let GameController = (function createGameController() {
 
     let addPlayer = (e) => {
         e.preventDefault();
+
         let name = document.querySelector('#name');
         let mark = document.querySelector('#mark');
-
+        
+        if(Gameflow.checkIfPlayerExists(name.value,mark.value)) {
+            alert('a player with that name or mark already exists');
+            return;
+        }
         let playerCount = Gameflow.getPlayerListSize();
 
         let playerContainer = document.createElement('div');
