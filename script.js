@@ -219,7 +219,7 @@ let Gameflow = (function createGameflow() {
         return 'none';
     }
 
-    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound };
+    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound, reset };
 })();
 
 let GameController = (function createGameController() {
@@ -260,7 +260,7 @@ let GameController = (function createGameController() {
         playerList.appendChild(playerContainer);
 
         Gameflow.addPlayer(Gameflow.createPlayer(name.value, mark.value));
-        
+
         name.value = '';
         mark.value = '';
     };
@@ -320,8 +320,10 @@ let GameController = (function createGameController() {
     let gameGrid = document.querySelector('.game');
     let startButton = document.querySelector('#start-round');
     let goBackButton = document.querySelector('#go-back');
+    let resetButton = document.querySelector('#reset');
     startButton.addEventListener('click', toggleHidden);
     goBackButton.addEventListener('click', toggleHidden);
+    resetButton.addEventListener('click', () => Gameflow.reset());
 
     playerForm.addEventListener('submit', addPlayer);
 
