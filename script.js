@@ -76,17 +76,22 @@ let Gameflow = (function createGameflow() {
         let roundResult = checkIfWonAndWhichMark();
         if (roundResult != 'none' && roundResult != 'stalemate') {
             let winningPlayer = findPlayerByMark(roundResult);
-            console.log(`${winningPlayer.name} won!`);
+
+            let gameStateP = document.querySelector('.game-state');
+            gameStateP.textContent = `${winningPlayer.name} won!`;
             currentPlayerIndex = 0;
             GameController.clearGameGrid();
             Gameboard.reset();
         }
         else if (roundResult == 'stalemate') {
-            console.log('stalemate!');
+            let gameStateP = document.querySelector('.game-state');
+            gameStateP.textContent = `stalemate!`;
             currentPlayerIndex = 0;
             Gameboard.reset();
         }
         else {
+            let gameStateP = document.querySelector('.game-state');
+            gameStateP.textContent = `game is running`;
             currentPlayerIndex = (currentPlayerIndex + 1) % Players.length;
         }
         Gameboard.printBoard();
