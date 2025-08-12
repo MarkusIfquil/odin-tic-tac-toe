@@ -22,7 +22,7 @@ button:hover {
 input {
     background-color: var(--ctp-mocha-surface0);
     border: none;
-    padding: 0.2em;
+    padding: 0.5em;
     border-radius: 1em;
 }
 

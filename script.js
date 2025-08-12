@@ -279,13 +279,13 @@ let GameController = (function createGameController() {
         }
     }
 
-    let noPlayers = () => {
-        return Gameflow.getPlayerListSize() == 0;
+    let enoughPlayers = () => {
+        return Gameflow.getPlayerListSize() > 1;
     }
 
     let toggleHidden = (e) => {
-        if (noPlayers()) {
-            alert("there are no players!");
+        if (!enoughPlayers()) {
+            alert("there are not enough players!");
             return;
         }
         setupDiv.classList.toggle("hidden");
