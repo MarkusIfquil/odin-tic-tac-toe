@@ -295,7 +295,7 @@ let GameController = (function createGameController() {
 
     let setupDiv = document.querySelector('.setup');
     let playerForm = document.querySelector('.player-form');
-    let gameGrid = document.querySelector('.game-controls');
+    let gameGrid = document.querySelector('.game');
     let startButton = document.querySelector('#start-round');
     let goBackButton = document.querySelector('#go-back');
     startButton.addEventListener('click', toggleHidden);
