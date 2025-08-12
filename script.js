@@ -21,7 +21,6 @@ let Gameboard = (function createGameboard(boardSize) {
 
     let placeMark = (playerMark, positionX, positionY) => {
         if (gameGrid[positionX][positionY] != ' ') {
-            console.log('there is already a player mark there');
             return false;
         }
         else {
@@ -52,12 +51,13 @@ let Gameflow = (function createGameflow() {
     };
 
     let addPlayer = (player) => {
-        console.log(player);
         Players.push(player);
     };
 
     let removePlayer = (player) => {
-        Players.splice(Players.find((p) => { p == player }), 1);
+        Players.splice(Players.findIndex((p) => {
+            return p.name == player.name && p.mark == player.mark;
+        }), 1);
     }
 
     let getPlayerListSize = () => {
@@ -69,16 +69,16 @@ let Gameflow = (function createGameflow() {
     }
 
     let checkIfPlayerExists = (name, mark) => {
-        if(name) {
+        if (name) {
             for (const player of Players) {
-                if(player.name == name) {
+                if (player.name == name) {
                     return true;
                 }
             }
         }
-        if(mark) {
+        if (mark) {
             for (const player of Players) {
-                if(player.mark == mark) {
+                if (player.mark == mark) {
                     return true;
                 }
             }
@@ -129,12 +129,10 @@ let Gameflow = (function createGameflow() {
 
     let findPlayerByMark = (mark) => {
         for (const player of Players) {
-            console.log(player);
             if (player.mark == mark) {
                 return player;
             }
         }
-        console.log('player not found');
         return 'none';
     }
 
@@ -218,8 +216,6 @@ let Gameflow = (function createGameflow() {
 
         let [resultRows, resultColumns, resultDiagonals] = [checkRows(), checkColumns(), checkDiagonals()];
 
-        // console.log(resultRows, resultColumns, resultDiagonals);
-
         if (resultRows != 'none') {
             return resultRows;
         }
@@ -237,18 +233,16 @@ let Gameflow = (function createGameflow() {
         return 'none';
     }
 
-    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound, reset, checkIfPlayerExists};
+    return { createPlayer, addPlayer, removePlayer, getPlayerListSize, getCurrentPlayer, playRound, reset, checkIfPlayerExists };
 })();
 
 let GameController = (function createGameController() {
     let removePlayer = (index) => {
         let removablePlayer = document.querySelector(`.player-list > .player-${index}`);
         let playerList = document.querySelector('.player-list');
-        console.log(index);
-        console.log(removablePlayer);
 
         playerList.removeChild(removablePlayer);
-        Gameflow.removePlayer();
+        Gameflow.removePlayer({ name: removablePlayer.children[0].textContent, mark: removablePlayer.children[1].textContent });
     }
 
     let addPlayer = (e) => {
@@ -256,8 +250,8 @@ let GameController = (function createGameController() {
 
         let name = document.querySelector('#name');
         let mark = document.querySelector('#mark');
-        
-        if(Gameflow.checkIfPlayerExists(name.value,mark.value)) {
+
+        if (Gameflow.checkIfPlayerExists(name.value, mark.value)) {
             alert('a player with that name or mark already exists');
             return;
         }
@@ -267,14 +261,14 @@ let GameController = (function createGameController() {
         playerContainer.classList.add(`player-${playerCount}`);
 
         let nameP = document.createElement('p');
-        nameP.textContent = 'name: ' + name.value;
+        nameP.textContent = name.value;
         let markP = document.createElement('p');
-        markP.textContent = 'mark: ' + mark.value;
+        markP.textContent = mark.value;
 
         let removePlayerButton = document.createElement('button');
         removePlayerButton.textContent = 'remove player';
         removePlayerButton.addEventListener('click', () => removePlayer(playerCount));
-        
+
         playerContainer.appendChild(nameP);
         playerContainer.appendChild(markP);
         playerContainer.appendChild(removePlayerButton);
