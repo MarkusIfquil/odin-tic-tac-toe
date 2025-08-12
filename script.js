@@ -114,6 +114,9 @@ let Gameflow = (function createGameflow() {
             for (let i = 0; i < size; i++) {
                 let count = 0;
                 let markToCheckAgainst = Gameboard.getMarkAtPosition(i, 0);
+                if(markToCheckAgainst == ' ') {
+                    continue;
+                }
                 for (let j = 0; j < size; j++) {
                     if (markToCheckAgainst != Gameboard.getMarkAtPosition(i, j)) {
                         break;
@@ -131,6 +134,9 @@ let Gameflow = (function createGameflow() {
             for (let i = 0; i < size; i++) {
                 let count = 0;
                 let markToCheckAgainst = Gameboard.getMarkAtPosition(0, i);
+                if(markToCheckAgainst == ' ') {
+                    continue;
+                }
                 for (let j = 0; j < size; j++) {
                     if (markToCheckAgainst != Gameboard.getMarkAtPosition(j, i)) {
                         break;
@@ -155,7 +161,7 @@ let Gameflow = (function createGameflow() {
                 count++;
                 j++;
             }
-            if (count == size) {
+            if (count == size && markToCheckAgainst != ' ') {
                 return markToCheckAgainst;
             }
             j = size - 1;
@@ -166,7 +172,7 @@ let Gameflow = (function createGameflow() {
                 }
                 j--;
             }
-            return markToCheckAgainst;
+            return markToCheckAgainst == ' ' ? 'none' : markToCheckAgainst;
         }
 
         let checkIfStalemate = () => {
@@ -182,15 +188,15 @@ let Gameflow = (function createGameflow() {
 
         let [resultRows, resultColumns, resultDiagonals] = [checkRows(), checkColumns(), checkDiagonals()];
 
-        // console.log(resultRows,resultColumns,resultDiagonals);
+        console.log(resultRows,resultColumns,resultDiagonals);
 
-        if (resultRows != 'none' && resultRows != ' ') {
+        if (resultRows != 'none') {
             return resultRows;
         }
-        if (resultColumns != 'none' && resultColumns != ' ') {
+        if (resultColumns != 'none') {
             return resultColumns;
         }
-        if (resultDiagonals != 'none' && resultDiagonals != ' ') {
+        if (resultDiagonals != 'none') {
             return resultDiagonals;
         }
 
