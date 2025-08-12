@@ -208,10 +208,7 @@ let GameController = (function createGameController(){
 
         Gameflow.addPlayer(Gameflow.createPlayer(name,mark));
     };
-
-    let playerForm = document.querySelector('.player-form');
-    playerForm.addEventListener('submit', addPlayer);
-
+    
     let fillGameGrid = (size) => {
         let grid = document.querySelector('.game-grid');
         for (let i = 0; i < size*size; i++) {
@@ -221,8 +218,18 @@ let GameController = (function createGameController(){
         grid.style['grid-template-columns'] = `repeat(${size},1fr)`;
         grid.style['grid-template-rows'] = `repeat(${size},1fr)`;
     }
-
+    
+    let startRound = (e) => {
+        playersDiv.classList.toggle("hidden");
+        gameGrid.classList.toggle("hidden");
+    }
+    
+    let playersDiv = document.querySelector('.players');
+    let playerForm = document.querySelector('.player-form');
+    let gameGrid = document.querySelector('.game-grid');
+    let startButton = document.querySelector('#start-round');
+    startButton.addEventListener('click', startRound);
+    playerForm.addEventListener('submit', addPlayer);
     fillGameGrid(3);
-
 })();
 

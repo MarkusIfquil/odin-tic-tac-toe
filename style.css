@@ -5,8 +5,7 @@
 }
 
 .hidden {
-    height: 0;
-    width: 0;
+    display: none !important;
 }
 
 body {
@@ -14,8 +13,9 @@ body {
     padding: 1em;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     justify-content: space-between;
+    text-align: center;
 }
 
 .main {
@@ -24,8 +24,17 @@ body {
     flex-direction: column;
 }
 
+.main > * {
+    border: 1px solid red;
+}
+
 .players {
     flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    justify-content: center;
 }
 
 .game-grid {
