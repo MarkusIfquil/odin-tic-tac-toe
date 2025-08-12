@@ -220,9 +220,9 @@ let GameController = (function createGameController() {
         let playerContainer = document.createElement('div');
         playerContainer.classList.add(`player-${playerCount}`);
         let nameP = document.createElement('p');
-        nameP.textContent = 'Name: ' + name.value;
+        nameP.textContent = 'name: ' + name.value;
         let markP = document.createElement('p');
-        markP.textContent = 'Mark: ' + mark.value;
+        markP.textContent = 'mark: ' + mark.value;
         let removePlayerButton = document.createElement('button');
         removePlayerButton.textContent = 'remove player';
         removePlayerButton.addEventListener('click', () => removePlayer(playerCount));
@@ -251,8 +251,8 @@ let GameController = (function createGameController() {
 
         e.target.textContent = Gameflow.getCurrentPlayer().mark;
 
-        changeCurrentPlayerText();
         Gameflow.playRound(row, column);
+        changeCurrentPlayerText();
     };
 
     let fillGameGrid = (size) => {
@@ -275,12 +275,12 @@ let GameController = (function createGameController() {
     }
 
     let toggleHidden = (e) => {
-        playersDiv.classList.toggle("hidden");
+        setupDiv.classList.toggle("hidden");
         gameGrid.classList.toggle("hidden");
         changeCurrentPlayerText();
     };
 
-    let playersDiv = document.querySelector('.players');
+    let setupDiv = document.querySelector('.setup');
     let playerForm = document.querySelector('.player-form');
     let gameGrid = document.querySelector('.game-controls');
     let startButton = document.querySelector('#start-round');

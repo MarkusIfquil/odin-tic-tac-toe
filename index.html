@@ -12,15 +12,18 @@
 <body>
     <header>tic tac toe</header>
     <div class="main">
-        <div class="players">
-            <form class="player-form">
-                <label for="name">name</label>
-                <input type="text" name="name" id="name">
-                <label for="mark">mark</label>
-                <input type="text" name="mark" id="mark">
-                <button type="submit">add player</button>
-            </form>
-            <div class="player-list"></div>
+        <div class="setup">
+            <div class="players">
+                <form class="player-form">
+                    <legend>add players</legend>
+                    <label for="name">name</label>
+                    <input type="text" name="name" id="name">
+                    <label for="mark">mark</label>
+                    <input type="text" name="mark" id="mark">
+                    <button type="submit">add player</button>
+                </form>
+                <div class="player-list"></div>
+            </div>
             <div class="game-actions">
                 <button type="button" id="start-round">start round</button>
             </div>
@@ -29,7 +32,7 @@
             <button type="button" id="go-back">go back</button>
             <p class="current-player">current player: </p>
             <div class="game-grid">
-                
+
             </div>
         </div>
     </div>
